@@ -87,7 +87,7 @@ def page_top(title,logoShown=True):
       title  The page title, at the start of the page body
       logoShown=True  Whether to show the logo graphic
     """
-    logo="""<div id='logo'><img src='/theo.png' alt='Theodolite logo' /></div>
+    logo="""<div id='logo'><img src='theo.png' alt='Theodolite logo' /></div>
 """
     top="""
 <div id='top' />
@@ -105,7 +105,7 @@ def page_foot(home_link=True, extra=''):
       extra=''  Extra test after home link (e.g., date)
     """
     if home_link:
-        home="""<span id='footer_home'><a href='%s'>Theodolite: a surveyer's tool</a></span>""" % (HOME_URL,)
+        home="""<span id='footer_home'><a href='%s'>Theodolite: a surveyor's tool</a></span>""" % (HOME_URL,)
     else:
         home=""
     return """
