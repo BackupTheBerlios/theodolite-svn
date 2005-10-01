@@ -203,8 +203,11 @@ if __name__=='__main__':
         except mailsError, err:
             fail("Unable to run the one survey %(id)s: %(err)s",returnCode=10,log=log,debug=DEBUG,id=id,err=err)
         if surveyResult:
-            m=msg("WARNING: unexpected results from running the one survey %(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
+            m=msg("WARNING: unexpected results from mailing to survey-takers for survey id=%(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
             print >>sys.stderr, m
+        elif verbose:
+            m=msg("Notice: mailing completed to survey-takers for survey id=%(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
+            print >>sys.stderr, m            
     else:
         sql="SELECT id FROM survey WHERE (date_open<=CURRENT_DATE) AND (date_closed>=CURRENT_DATE)"
         dct={}
@@ -218,8 +221,11 @@ if __name__=='__main__':
             except mailsError, err:
                 fail("From among the active surveys %(dBres)s unable to run the one %(id)s: %(err)s",returnCode=12,log=log,debug=DEBUG,dBres=repr(dBres),id=id,err=err)
             if surveyResult:
-                m=msg("WARNING: unexpected results from running the active survey %(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
+                m=msg("WARNING: unexpected results from mailing to survey-takers for survey id=%(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
                 print >>sys.stderr, m
+            elif verbose:
+                m=msg("Notice: mailing completed to survey-takers for survey id=%(id)s: %(surveyResult)s",log=log,debug=DEBUG,id=id,surveyResult=surveyResult)
+                print >>sys.stderr, m            
     try:
         dBcnx.commit()
     except psycopg.DatabaseError, err:

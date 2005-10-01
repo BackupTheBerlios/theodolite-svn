@@ -386,7 +386,7 @@ data
         bail("Unable to get the SPSS answer format for this survey by fetching from the database",devel="Unable to get the SPSS answer format for survey %(survey_id)s by fetching from the database: %(err)s",log=log,debug=debug,survey_id=repr(survey_id),err=err)
     if not(dBres):
         bail("Unable to get the SPSS answer format data",devel="Unable to get the SPSS answer format data: result of database query is empty",log=log,debug=debug)
-    answerformat=["%(subject_id)s"]
+    answerformat=["%(number)s","%(subject_id)s"]
     for (number,comment) in dBres:
         answerformat.append("%%(value_%s)s" % (number,))
         if comment:

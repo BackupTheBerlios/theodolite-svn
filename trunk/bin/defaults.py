@@ -51,4 +51,4 @@ else:  # e.g., running as the apache user
 # Log lots of stuff; turn off for production use
 LOGGING=True
 # Give lots of extra info; turn off for production use
-DEBUG=True
+DEBUG=False

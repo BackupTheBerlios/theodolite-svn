@@ -8,6 +8,7 @@ import sha  # crypto
 import smtplib, MimeWriter, StringIO
 
 import psycopg
+import mx.DateTime
 
 import cgiUtils
 from cgiUtils import bail
@@ -23,8 +24,8 @@ from util import *
 SUBJECT_FILE=defaults.SUBJECT_FILE  # set separately if you need it frozen on a per-file basis
 THIS_SCRIPT=defaults.ADMIN_URL  # if you set the prior line separately then you probably want many copies of this script, and will want this line changed -- inlcude the scheme, such as https!
 
-# DEBUG=defaults.DEBUG
-DEBUG=True
+DEBUG=defaults.DEBUG
+# DEBUG=True
 LOGGING=True # permission to write to the log file?
 LOGFILE_NAME='admin.log'
 
@@ -33,6 +34,36 @@ month_names=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','
 
 if DEBUG:
     cgitb.enable()
+
+    
+dateStringFormat='%b %d, %Y'   # like Sep 7, 2005
+def make_date_string():
+    """Produce a string that will do for a <select> string.
+"""
+    r=[]
+    today=mx.DateTime.localtime()
+    for i in range(0,45):
+        newDay=today+mx.DateTime.RelativeDateTime(days=i)
+        dateString=newDay.strftime(dateStringFormat)
+        # dateString="%s %s, %s" % (month_names[newDay.month-1],newDay.day,newDay.year)
+        r.append("<option value=%s>%s</option>" % (quoteattr(dateString),cgi.escape(dateString)))
+    return "\n".join(r)
+
+
+def check_date(d_str,log=None):
+    """See if a date string is a sensible date; knows about leap years, 'thirty
+    days hath September', etc.
+      d_str  A date that represents a string
+      log  A logging instance
+    Returns a pair (mx.DateTime object or None, error string)
+    """
+    try:
+        dt=mx.DateTime.strptime(d_str,dateStringFormat)
+    except mx.DateTime.RangeError, err:
+        return(None,"date %s" % (cgi.escape(d_str),))
+    except Exception, err:
+        return(None,"date string %s" % (cgi.escape(d_str),))
+    return (dt,'')
 
 
 def default_page():
@@ -107,29 +138,30 @@ paragraph between your title and your questions.</p></td>
         r.append(upload_line)
     r.append("\n</table>\n")
     # select the start and end dates
-    curr_time=time.localtime()
-    years=[]
-    this_year=curr_time[0]
-    for year in range(this_year,this_year+2):
-        years.append("  <option value='%d'>%d</option>\n" % (year,year))
-    years.append("</select>\n")
-    years_str="".join(years)
-    this_month=curr_time[1]
-    months=[]
-    for m in range(this_month,this_month+12):
-        m_int=(m-1) % 12
-        m_str=month_names[m_int]
-        months.append("  <option value='%s'>%s</option>\n" % (m_int+1,cgi.escape(m_str)))
-    months.append("</select>\n")
-    months_str="".join(months)
-    this_day=curr_time[2]
-    days=[]
-    for day in range(this_day-2,this_day+29):
-        d=(day % 31)+1  # start with today; midnight that just passed
-        days.append("  <option value='%s'>%s</option>\n" % (d,d))
-    days.append("</select>\n")
-    days_str="".join(days)
-    r.append(cgiUtils.section('Survey Dates and Mailings'))
+    dateString=make_date_string()
+    #curr_time=time.localtime()
+    #years=[]
+    #this_year=curr_time[0]
+    #for year in range(this_year,this_year+2):
+    #    years.append("  <option value='%d'>%d</option>\n" % (year,year))
+    #years.append("</select>\n")
+    #years_str="".join(years)
+    #this_month=curr_time[1]
+    #months=[]
+    #for m in range(this_month,this_month+12):
+    #    m_int=(m-1) % 12
+    #    m_str=month_names[m_int]
+    #    months.append("  <option value='%s'>%s</option>\n" % (m_int+1,cgi.escape(m_str)))
+    #months.append("</select>\n")
+    #months_str="".join(months)
+    #this_day=curr_time[2]
+    #days=[]
+    #for day in range(this_day-2,this_day+29):
+    #    d=(day % 31)+1  # start with today; midnight that just passed
+    #    days.append("  <option value='%s'>%s</option>\n" % (d,d))
+    #days.append("</select>\n")
+    #days_str="".join(days)
+    #r.append(cgiUtils.section('Survey Dates and Mailings'))
     dates_info="""
 <p>
 You will next enter the dates for your survey.
@@ -146,32 +178,51 @@ To send such a mail, click in a date and enter a message body
 To not send that mail, just leave the email area blank.
 </p>
 <p>
-Note that the dates refer to the midnight after that day.
-For instance, if you open the survey today, %s %s, then it will open at
-midnight tonight.
+Note that the dates refer to the midnight ending that day.
+For instance, if you select today's date then the earliest that
+your survey questions
+could be mailed out would be midnight tonight.
 </p>
-""" % (defaults.LINK_STRING,defaults.LINK_STRING,cgi.escape(month_names[this_month]),this_day)
+""" % (defaults.LINK_STRING,defaults.LINK_STRING)
     r.append(dates_info)
     dates_table_top="""
 <table class='info_summary'>
 """
     r.append(dates_table_top)
-    r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey should begin accepting survey input.</span></p></td>
-  <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>
-""" % (quoteattr('year1'),years_str,quoteattr('month1'),months_str,quoteattr('day1'),days_str))
+    r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey should begin accepting input.</span></p></td>
+  <td class='info'><select name=%s>\n%s</select></td></tr>
+""" % (quoteattr('date1'),dateString))
     r.append("""<tr class='oddrow'><td class='info_description'><p><span class='required'>The mail that you would like to send.</span>  Remember to include a &quot;%s&quot;.</p></td>
   <td class='info'><textarea name='body1' rows='%s' cols='%s'></textarea></td></tr>
 """ % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the first prompting email.</p></td>
-  <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year2'),years_str,quoteattr('month2'),months_str,quoteattr('day2'),days_str))
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date2'),dateString))
     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of the email -- remember the &quot;%s&quot;.</p></td>
   <td class='info'><textarea name='body2' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the second prompting email.</p></td>
-  <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year3'),years_str,quoteattr('month3'),months_str,quoteattr('day3'),days_str))
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date3'),dateString))
     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of your email -- remember a &quot;%s&quot;.</p></td>
   <td class='info'><textarea name='body3' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
-    r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey will stop accepting responses.</span></p></td>
-  <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year4'),years_str,quoteattr('month4'),months_str,quoteattr('day4'),days_str))
+    r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey will stop accepting responses (actually, the midnight starting this date).</span></p></td>
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date4'),dateString))
+
+
+##     r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey should begin accepting survey input.</span></p></td>
+##   <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>
+## """ % (quoteattr('year1'),years_str,quoteattr('month1'),months_str,quoteattr('day1'),days_str))
+##     r.append("""<tr class='oddrow'><td class='info_description'><p><span class='required'>The mail that you would like to send.</span>  Remember to include a &quot;%s&quot;.</p></td>
+##   <td class='info'><textarea name='body1' rows='%s' cols='%s'></textarea></td></tr>
+## """ % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
+##     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the first prompting email.</p></td>
+##   <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year2'),years_str,quoteattr('month2'),months_str,quoteattr('day2'),days_str))
+##     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of the email -- remember the &quot;%s&quot;.</p></td>
+##   <td class='info'><textarea name='body2' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
+##     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the second prompting email.</p></td>
+##   <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year3'),years_str,quoteattr('month3'),months_str,quoteattr('day3'),days_str))
+##     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of your email -- remember a &quot;%s&quot;.</p></td>
+##   <td class='info'><textarea name='body3' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
+##     r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey will stop accepting responses (actually, the midnight starting this date).</span></p></td>
+##   <td class='info'><table>\n<tr><td>Year&nbsp;<select name=%s>\n%s</td><td>Month&nbsp;<select name=%s>\n%s</td><td>Day&nbsp;<select name=%s>\n%s\n</td></tr></table></td></tr>""" % (quoteattr('year4'),years_str,quoteattr('month4'),months_str,quoteattr('day4'),days_str))
     r.append("</table>\n")
     r.append(cgiUtils.section('When you are ready ..'))
     r.append("<p>.. hit the button to register your request with the Theodolite administrator: <input type='submit' name='default_submit' value='Ready' />.</p>\n")
@@ -179,21 +230,20 @@ midnight tonight.
     return "".join(r)
 
 
-
-def check_date(d_str,log=None):
-    """See if a date string is a sensible date; knows about leap years, 'thirty
-    days hath September', etc.
-      d_str  A date that represents a string
-      log  A logging instance
-    Returns a pair (mx.DateTime object or None, error string)
-    """
-    try:
-        dt=mx.DateTime.strptime(d_str,'%Y-%m-%d')
-    except mx.DateTime.RangeError, err:
-        return(None,"date %s" % (d_str,))
-    except Exception, err:
-        return(None,"date string %s" % (d_str,))
-    return (dt,'')
+## def check_date(d_str,log=None):
+##     """See if a date string is a sensible date; knows about leap years, 'thirty
+##     days hath September', etc.
+##       d_str  A date that represents a string
+##       log  A logging instance
+##     Returns a pair (mx.DateTime object or None, error string)
+##     """
+##     try:
+##         dt=mx.DateTime.strptime(d_str,'%Y-%m-%d')
+##     except mx.DateTime.RangeError, err:
+##         return(None,"date %s" % (d_str,))
+##     except Exception, err:
+##         return(None,"date string %s" % (d_str,))
+##     return (dt,'')
 
 
 def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
@@ -218,40 +268,40 @@ def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
     title=cgiUtils.getfirst(fs,'title')
     if not(title):
         return cgiUtils.need_more('title')
-    years=[]
-    months=[]
-    days=[]
-    for i in range(1,5):
-        year=cgiUtils.getfirst(fs,"year%d" % (i,))
-        if year is None:
-            return cgiUtils.need_more("year %d" % (i,))
-        try:
-            year=int(year)
-        except:
-            return cgiUtils.need_different("year %d" % (i,))
-        years.append(year)
-        month=cgiUtils.getfirst(fs,"month%d" % (i,))
-        if month is None:
-            return cgiUtils.need_more("month %d" (i,))
-        try:
-            month=int(month)
-        except:
-            return cgiUtils.need_different("month %d" % (i,))
-        if not((month>0)
-               and (month<=12)):
-            return cgiUtils.need_different("month %d" % (i,))
-        months.append(month)
-        day=cgiUtils.getfirst(fs,"day%d" % (i,))
-        if day is None:
-            return cgiUtils.need_more("day %d" % (i,))
-        try:
-            day=int(day)
-        except:
-            return cgiUtils.need_different("day %d" % (i,))
-        if not((day>0)
-               and (day<=31)):
-            return cgiUtils.need_different("day %d" % (i,))
-        days.append(day)
+##     years=[]
+##     months=[]
+##     days=[]
+##     for i in range(1,5):
+##         year=cgiUtils.getfirst(fs,"year%d" % (i,))
+##         if year is None:
+##             return cgiUtils.need_more("year %d" % (i,))
+##         try:
+##             year=int(year)
+##         except:
+##             return cgiUtils.need_different("year %d" % (i,))
+##         years.append(year)
+##         month=cgiUtils.getfirst(fs,"month%d" % (i,))
+##         if month is None:
+##             return cgiUtils.need_more("month %d" (i,))
+##         try:
+##             month=int(month)
+##         except:
+##             return cgiUtils.need_different("month %d" % (i,))
+##         if not((month>0)
+##                and (month<=12)):
+##             return cgiUtils.need_different("month %d" % (i,))
+##         months.append(month)
+##         day=cgiUtils.getfirst(fs,"day%d" % (i,))
+##         if day is None:
+##             return cgiUtils.need_more("day %d" % (i,))
+##         try:
+##             day=int(day)
+##         except:
+##             return cgiUtils.need_different("day %d" % (i,))
+##         if not((day>0)
+##                and (day<=31)):
+##             return cgiUtils.need_different("day %d" % (i,))
+##         days.append(day)
     body1=cgiUtils.getfirst(fs,'body1')
     if body1 is None:
         return cgiUtils.need_more('first email')
@@ -330,32 +380,40 @@ def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
                 if email_address.find('<')==-1:  # no tricks with HTML
                     firstTenEmails.append(email_address)
         sfile.close()
-    # check that data is consistent
+    # get the dates and the emails
     if not(no_subj_id_flag):
         if body1.count(defaults.LINK_STRING)==0:
             return cgiUtils.need_different("initial email message (it contains no %s)" % (defaults.LINK_STRING,))
-    date_open="%s-%s-%s" % (years[0],months[0],days[0])
+    # date_open="%s-%s-%s" % (years[0],months[0],days[0])
+    date_open=cgiUtils.getfirst(fs,"date1")
     (dt,dt_err)=check_date(date_open)
+    date_open=dt.date  # convert to ISO fro Pastgres
     if dt is None:
         cgiUtils.need_different("opening %s (is there such a date?)" % (cgi.escape(dt_err),))
     if (not(no_subj_id_flag)
         and (body2.count(defaults.LINK_STRING)>0)):
-            date_mail2="%s-%s-%s" % (years[1],months[1],days[1])
+            # date_mail2="%s-%s-%s" % (years[1],months[1],days[1])
+            date_mail2=cgiUtils.getfirst(fs,"date2") # first promting email
             (dt,dt_err)=check_date(date_mail2)
+            date_mail2=dt.date # convert to ISO
             if dt is None:
                 cgiUtils.need_different("first prompt %s (is there such a date?)" % (cgi.escape(dt_err),))
     else:
         date_mail2=None # send no such mail
     if (not(no_subj_id_flag)
         and (body3.count(defaults.LINK_STRING)>0)):
-            date_mail3="%s-%s-%s" % (years[2],months[2],days[2])
+            # date_mail3="%s-%s-%s" % (years[2],months[2],days[2])
+            date_mail3=cgiUtils.getfirst(fs,"date3") # second promting email
             (dt,dt_err)=check_date(date_mail3)
+            date_mail3=dt.date # convert to ISO for Postgres
             if dt is None:
                 cgiUtils.need_different("second prompt %s (is there such a date?)" % (cgi.escape(dt_err),))
     else:
         date_mail3=None # send no such mail
-    date_closed="%s-%s-%s" % (years[3],months[3],days[3])
+    # date_closed="%s-%s-%s" % (years[3],months[3],days[3])
+    date_closed=cgiUtils.getfirst(fs,"date4")   # ending date
     (dt,dt_err)=check_date(date_closed)
+    date_closed=dt.date  # convert to ISO for Postgres
     if dt is None:
         cgiUtils.need_different("closing %s (is there such a date?)" % (cgi.escape(dt_err),))
     # end data checking; put the survey data into the database
