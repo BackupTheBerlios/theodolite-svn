@@ -1,0 +1,42 @@
+This is Theodolite, a surveyer's tool
+=====================================
+
+__Summary__
+
+Theo allows users to makes simple surveys in a web form.  In their survey they
+can have a wide variety of questions.  (New question types are easily added --
+within minor technical limits -- by putting the HTML code into the database.)
+Users then upload a file of people to whom emails will be sent containing a 
+link to the survey.
+
+Subjects receive the email, and click to take the survey.  They access the
+survey through an identifier, and when the system records their response
+then it also remembers that they responded and will not allow them to respond
+twice.  
+
+
+__For More__
+
+See the file html/index.html for the technical points.  Basically, you need
+Python, PostgreSQL, and the ability to install the scripts (e.g, if you have
+a Linux machine connected to the Internet then you are set).
+
+
+__License__
+
+This software is available under the GNU Public License.  See the license
+at http://www.gnu.org.
+
+
+__Acknowledgements__
+
+Development of this package was supported by Saint Michael's College, 
+in Colchester, VT USA.  See http://www.smcvt.edu.
+
+
+__Author__
+
+Jim Hefferon
+St Michael's College
+2004-Oct-12
+jhefferon@smcvt.edu

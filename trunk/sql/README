@@ -1,0 +1,20 @@
+NOTES ABOUT STOCKING WITH NEW QUESTIONS
+
+  1) You can use either 'radio' questions or 'checkbox' questions; just be
+  sure to set multiple to be 'False' in the 'radio' case and multiple to be
+  'True' in the 'checkbox' case.
+
+  2) The legal answers have to be strings, because PostgreSQL does not allow
+  'TEXT OR INTEGER' as a data type (obviously).  
+
+  3) For any question_type, you specify that when results are shown you want 
+  averages and standard deviations taken by declaring 'quantitative' to be 
+  'TRUE' (but without the quotes in the .sql).
+
+  4) For any question_type, you specify that when results are shown you want 
+  the frequency distribution of the answers to be shown (as opposed to just 
+  a listing, such as you would employ for a comment-type question) by setting 
+  'bar_chart' to be 'TRUE' (but without the quotes in the .sql).
+
+  5) The legal answers will be shown on the results page in the same order in
+  which they are entered into the database. 

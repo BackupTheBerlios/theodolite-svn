@@ -1,0 +1,69 @@
+Theodolite Installation
+=======================
+
+These are the steps to install the system.  Naturally, you need 
+permissions, and there needs to be a system user account on PostgreSQL for 
+your web daemon (e.g., the "apache" that is granted permission in 
+the theo_create.sql file below).
+
+0) Create a database.  Include the user that you will run as (I use
+  'ftpmaint' for this), and the user that your web daemon runs as (I
+  use 'apache').
+    createdb -e -E utf-8 theo
+  Adjust the user names in the .sql files to reflect the names that you have
+  chosen for these users.
+
+1) Put the theo files someplace.  You can put them below you web daemon's
+cgi-bin directory.  Personally, I prefer to put them somewhere else
+  EX: mkdir /var/theo
+      cd /var
+      unzip theo
+  It must be someplace that your web daemon can read.
+     sudo -u apache cat /var/theo/html/index.html
+Then I make a soft link between the .py files under theo and the web server's
+cgi-bin directory.  
+  EX: mkdir /var/www/cgi-bin/theo
+      ln -s /var/theo/cgi-bin/*.py /var/www/cgi-bin/theo
+Correct the #! line in each executable file.  
+
+Also, I make a soft link to the theo index page
+  EX: mkdir /var/www/html/theo
+      ln -s /var/theo/html/index.html /var/www/html/theo/index.html
+and adjust the link in cgi-bin/cgiUtils.py's page_footer() function linking
+to that index file. 
+
+2) Edit the theo/cgi-bin/library.py file to point to your theo/bin directory
+
+3) Edit the defaults.py file to suit your situation.  In particular, change the
+string called SEPARATOR by choosing your own wacky characters.  This makes 
+your subject ID's more secure. 
+
+4) Edit the .sql file to reflect the name of the accounts that you will
+use to access the database, and then run the .sql files.
+  EX: cd theo/sql
+      psql -a -f theo_create.sql theo
+      psql -a -f theo_stock.sql theo
+(The "drop" file is for deleting old material and starting over, and the
+"debug" file is development.)  
+
+
+
+Theodolite running
+==================
+
+1) Whenever you need to mail out the email notices, run the bin/mails.py 
+script.  Probably it is best to make this a cron job and run it shortly
+after midnight each night.
+
+
+
+
+Closing
+=======
+
+I would appreciate corrections or additions.
+
+Jim Hefferon
+St Michael's College
+2004-Oct-12
+jhefferon@smcvt.edu  

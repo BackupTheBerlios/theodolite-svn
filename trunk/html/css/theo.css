@@ -1,0 +1,124 @@
+body {font-family: sans-serif;
+      font-size: 11pt;
+      font-weight: normal;
+	width: 8in;
+	}
+code {font-size: 9.5pt;}
+
+a:link {color: #484e53;
+	text-decoration: underline;}
+a:visited {color: #89959e;
+	text-decoration: none;}
+
+div#top {padding-top: 1em;}
+div#intro {}
+
+div#footer {background-color: white;
+	color: #606060;
+	border-color: blue;
+	border-type: solid;
+	border-top: 1px;
+	padding-top: 1em;
+	font-style: italic;
+	font-size: small;}
+table.page_foot tr td.left {text-align: left;}
+table.page_foot tr td.right {text-align: right;}
+span#footer_author {text-align: left;}
+span#footer_home {text-align: right;}
+
+div#section {
+          margin-top: 0pt; margin-bottom: 0pt; 
+          border-top: 0pt; border-bottom: 0pt; 
+          padding-top: 0pt; padding-bottom: 0pt}
+.subhead {color: #636b72;
+	padding-top: 1em;
+	font-style: oblique;}
+
+table {vertical-align: top;}
+table tr td {text-align: center;}
+table tr th {color: black;}
+tr.oddrow {background-color: #fffbbe;}
+tr.evenrow {background-color: white;}
+
+table.info_summary {background-color: #e4a8f7;
+	font-size: 10pt;
+}
+td.info_description {text-align: right;}
+td.info {text-align: left;}
+table.info_summary tr td.info_description p {vertical-align: top;
+	margin: 1.2ex;}
+table.info_summary tr td.info * {vertical-align: baseline;
+	margin: 1.2ex;
+}
+table.info_summary tr td.info table * {
+	margin: .2ex;
+}
+
+.required {color: red;}
+
+p.question {margin-top: 5ex;}
+.question_number {color: #636b72;
+	font-style: italic;
+	margin-right: .75em;
+}
+
+table.question_item tr td {text-align: left;}
+.response_results {font-size: small;}
+.response_results table tr td {padding-left: 15px;
+	border: 1px;}
+
+table.results {font-size: small;
+	padding-top: 2ex;
+}
+table.results tr td {text-align: left;}
+table.results_distribution {
+	background-color:  #e4a8f7;
+	border: 1px solid gray;
+	border-collapse: separate;
+}
+table.results_distribution tr td.value {border-style: hidden;
+	text-align: right;
+}
+table.results_distribution tr td.number {border-style: hidden;
+	text-align: right;
+}
+table.results_distribution tr td.key {border-style: solid;
+	border-width: 1px;
+	border-collapse: collapse;
+	padding: 2px;
+	background-color: white;
+}
+table.results_distribution tr td.total {border-style: solid;
+	border-width: 1px;
+	border-collapse: collapse;
+	padding: 2px;
+	background-color: white;
+}
+tr.mean {}
+
+table.results_list {
+	text-align: left;
+	background-color:  #e4a8f7;
+	border: 1px solid gray;
+	border-collapse: separate;
+}
+table.results_list tr td {
+	text-align: left;
+}
+table.comments_list {
+	vertical-align: top;
+	text-align: left;
+	background-color:  #e4a8f7;
+	border: 1px solid gray;
+	border-collapse: separate;
+}
+table.comments_list tr td {
+	text-align: left;
+}
+
+
+
+div#survey {background-color: #f4dfa8;
+	padding-top: 3px;
+	padding-bottom: 3px;}
+

@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html
+    PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+    ' http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd '>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+<head>
+  <title>Theodolite: Theodolite: Survey results</title>
+  <link rel='stylesheet' type='text/css'
+      href='/css/theo.css'
+      title='Theodolite style' />
+</head>
+
+<body>
+<div id='logo'><img src='/theo.png' alt='Theodolite: a tool for surveyers' /></div>
+<div id='top' />
+<h2>Theodolite: a tool for surveyers</h2>
+
+<div class='section' />
+<h3 class='subhead'>In brief</h3>
+<p>
+This software runs surveys over the web.
+</p>
+
+<p>
+Survey givers fill out web pages to make up their own survey, 
+and also to provide the system with a list of survey-takers.
+These survey takers are then sent an email asking for their response.
+The survey-givers can see the results on the web, 
+or download them for further analysis.
+</p>
+
+<div class='section' />
+<h3 class='subhead'>Key points</h3>
+
+<p>
+Theodolite has a number of features that are appealing
+to the survey-giver (the Theo user), to the survey takers
+(the subjects), and to the system administrator.
+</p>
+
+<ul>
+<li />
+Users make up their own survey by filling out a web form.
+
+<li />
+Users can choose from a wide variety of question types, 
+such as yes-no or rate-one-to-ten.
+Questions can have multiple values, such as &quot;check all that apply.&quot;
+Administrators can add new question types 
+by entering HTML into the database&nbsp;--
+new question types do not require new programming.
+
+<li />
+Surveys cannot go out without being approved by a Theo administrator.
+This is done on a simple web form, so routine Theodolite 
+administration can be done by a nontechnical person. 
+
+<li />
+Users upload a file listing the subjects that they wish to survey.
+This file has a simple format: for each subject there is a separate line,
+with an id and an email.
+Because the file is simple, users can easily 
+get the information from a database, mailing list, etc.
+
+<li />
+Each subject of each survey is assigned a unique identifier at upload time.
+The system uses these
+to prevent a subject from answering any survey multiple times.
+The identifiers are long random strings, so
+no one can forge responses by guessing identifiers.
+
+<li />
+On the day that the survey opens, 
+each subject is emailed a message.
+This message was written by the user when the survey was entered.
+Each email contains only one address so no
+one sees the email address of any other subject.
+It has a link that subjects click to take the survey.
+That link contains the subject identifier,
+which is not just unique within the survey, but also unique across surveys as
+well, so the system can tell what survey the users will take.
+
+<li />
+Users can set up their survey so that subjects will be sent
+one or two prompting emails, at selected dates after the survey opens.
+The wording of these prompts is entirely up to the user.
+The system uses the fact that subjects have identifiers to
+prompt only the ones that have not yet responded. 
+
+<li />
+Users establish a closing date for their survey and 
+no responses are allowed after that date.
+
+<li />
+Users can view a page giving the results of their survey,
+using a password that they entered while setting up the survey.
+They can view that page during the survey, or after.
+That page contains a simple analysis, and allows the user to download
+the full results of the survey in the CSV format (comma-separated values), 
+which can be imported into any
+statistical package or spreadsheet for full analysis. 
+Because subjects have an identifier, users 
+can answer questions like, 
+&quot;What percentage of subjects who responded yes to question&nbsp;1
+also responded yes to question&nbsp;5?&quot;
+
+<li />
+For specialized circumstances,
+users can select to have survey
+responses be anonymous.
+Subjects will still not be able to answer multiple times, 
+but the CSV file will only list responses as being from
+&quot;anonymous&quot;.
+(The specialized circumstance is that this makes the analysis mentioned 
+in the previous item impossible;
+the advantage is that a user cannot tell that the person who responded
+&quot;21&quot; and &quot;male&quot; early in the survey is the 
+same person who responded &quot;no&quot; to a later question.)
+
+<li />
+Users can offer one of those goofy
+web surveys where anyone can answer, any number of times.
+Theo allows this because Theo has a sense of humor, too.
+Note that in this case, some of the other properties of surveys are affected; 
+for instance, there are no mailings.
+
+<li />
+Users can also select to have the
+system email them the results each time that 
+a subject responds (this may be useful in small surveys, or as a 
+backup for users who have been burned once too often). 
+
+<li />
+Theo is based on software that is 
+widely-available, standards-compliant, and free.
+Installation is easy. 
+The footprint is small
+(it uses Python CGI scripts,
+some SQL that is known to work with PostgreSQL, 
+and a Python cron job to send the emails, so 
+there is no web publishing environment to worry about).
+The code is not very large, and is easily modified by a technical person.
+
+</ul>
+
+
+
+
+<div class='section' />
+<h3 class='subhead'>License</h3>
+
+Theodolite is Free.
+It is under the 
+<a href='http://www.gnu.org'>GNU Public License</a>.
+Basically: you may have the source code and run the software&nbsp;-- with 
+no warantee of any kind&nbsp;-- provided that if you redistribute derived 
+code then you must do so under the same license.
+</p>
+
+
+
+<div class='section' />
+<h3 class='subhead'>Examples</h3>
+<p>
+Here are some ways that you might use this system.
+</p>
+
+<ol>
+<li />
+A college can set up a Theo system. 
+For instance, to see what students think of the new meal plan, all students 
+could be emailed, using a list generated by the registrar.
+The results can be imported into statistical software for complex analysis.
+(This is Theo's target application.)
+
+<li />
+A club could survey its members, without having to worry about
+stamps, stuffing envelopes, etc.,
+or the cost of using an online survey provider.
+Answers can be anonymous, in case the membership is concerned
+about how the responses will be handled.
+
+<li />
+A high school teacher giving a statistics class who wants to have
+students in the class only survey the other students 
+can set a configuration variable
+to always use the same list of subjects.
+Then students can then enter and interpret their own surveys.
+
+</ol>
+
+
+<div class='section' />
+<h3 class='subhead'>Acknowledgement</h3>
+Development of this software has been supported by 
+<a href='http://www.smcvt.edu'>Saint Michael's College</a>.
+
+
+<div id='footer'><hr />
+<table class='page_foot' width='100%'>
+  <tr>
+    <td class='left'><span id='footer_home'><a href='http://cvs.theodolite.sarovar.org'>Theodolite: a tool for surveyers</a></span></td>
+    <td class='right'><span id='footer_author'>Author: Jim Hefferon</span></td>
+  </tr>
+
+</table>
+</div>
+</body></html>
