@@ -11,6 +11,13 @@ NOTES ABOUT STOCKING WITH NEW QUESTIONS
   averages and standard deviations taken by declaring 'quantitative' to be 
   'TRUE' (but without the quotes in the .sql).
 
+  Note the field in the legal_answers table called 'analyzable'.  Suppose that
+  you want to ask "Rate 1 to 5" and you have answers coded 1, 2, .. 5.  If you
+  want also to have an answer coded 0 for 'no opinion' then you don't want
+  that 0 as part of the mean or std dev.  So set the legal_answers row as:
+    q_type,answer,analyzable = ('onetofivewithnoopinion','0',FALSE) 
+  .
+
   4) For any question_type, you specify that when results are shown you want 
   the frequency distribution of the answers to be shown (as opposed to just 
   a listing, such as you would employ for a comment-type question) by setting 

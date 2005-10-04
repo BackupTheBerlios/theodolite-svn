@@ -118,6 +118,120 @@ table.comments_list tr td {
 
 
 
+table.tf tr td {
+	padding-right: .1in;
+	text-align: left;
+}
+table.tfu tr td {
+	padding-right: .1in;
+	text-align: left;
+}
+
+table.yn tr td {
+	padding-right: .1in;
+	text-align: left;
+}
+table.ynu tr td {
+	padding-right: .1in;
+	text-align: left;
+}
+
+table.satis tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.levelofagreement tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.howmuchthree tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+table.howmuchfour tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.levelofconcern tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.expectationsmet tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.excellenttopoor tr td {
+	padding-right: .15in;
+	text-align: center;
+}
+table.excellenttopoorwithnonparticipation tr td {
+	padding-right: .15in;
+	text-align: center;
+}
+
+table.onetoten tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.onetofive tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.dwm tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.gender tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.class tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.gpa tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.meetingtype tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+table.meetingtime tr td {
+	padding-right: .1in;
+	text-align: center;
+}
+
+table.highesteducation tr td {
+	padding-right: .1in;
+	text-align: right;
+}
+
+table.satisfactionvertical tr td {
+	padding-right: .1in;
+	text-align: right;
+}
+
+table.definitelyvertical tr td {
+	padding-right: .1in;
+	text-align: right;
+}
+
+
+
+
+
 div#survey {background-color: #f4dfa8;
 	padding-top: 3px;
 	padding-bottom: 3px;}

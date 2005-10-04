@@ -18,7 +18,8 @@ import defaults
 from dBUtils import *
 import surveyObject
 
-DEBUG=defaults.DEBUG
+# DEBUG=defaults.DEBUG
+DEBUG=True
 LOGGING=True # permission to write to the log file?
 LOGFILE_NAME='survey.log'
 MAX_NUM_QUESTIONS=50
@@ -111,14 +112,18 @@ def accept_survey(fs,subject_id,survey,dBcnx,dBcsr):
         else:
             ans=cgiUtils.getfirst(fs,q_name)
         if not(ans): # no answer found for this question
-            continue
+            # JH 2005-Oct-01 continue
+            ans=None
         if not(type(ans)==type([])):
             ans=[ans]  # ans is a list for uniformity
         for val in ans:  
             # check the answer is legal
             legalAnswers=survey.getQuestionLegalAnswers(q_no)
-            if not(legalAnswers is None): # if it is None, any answer legal
-                if not(val in legalAnswers):
+            if log:
+                log.debug("legal answers is %s" % (repr(legalAnswers),))
+            if not(legalAnswers is None): # if it is None, any answer is legal
+                if (not(val in legalAnswers)
+                    and not(val is None)):  # the respondent didn't answer 
                     bail("The value given for one of the questions is not valid",devel="The value %(val)s given for question %(q_no)s is not valid on survey %(survey_id)s with subject %(subject_id)s",log=log,debug=DEBUG,val=val,q_no=q_no,survey_id=survey_id,subject_id=subject_id)
             # insert the value in the dB
             if survey.getAnonymous(): 

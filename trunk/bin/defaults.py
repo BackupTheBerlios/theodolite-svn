@@ -10,6 +10,7 @@ SURVEY_URL="%s/survey.py" % (BASE_CGI_URL,)
 RESULTS_URL="%s/results.py" % (BASE_CGI_URL,)
 HTML_PATH='theo'
 BASE_HTML_URL="%s://%s/%s" % (SCHEME,THIS_MACHINE,HTML_PATH)
+GRAPHIC_URL='/'+HTML_PATH  # where the .png lives; set this in index.html also
 HOME_URL="%s/index.html" % (BASE_HTML_URL,)
 
 # used to generate unique ids from the survey id and the user's id 

@@ -69,18 +69,13 @@ def check_date(d_str,log=None):
 def default_page():
     """Show the visitor the options to start a survey
     """
-    r=[cgiUtils.section('Survey basic information')]
+    r=[cgiUtils.section('First: an outline of your survey')]
     r.append(cgiUtils.form_begin(action=THIS_SCRIPT,enctype='multipart/form-data',charset=defaults.HTML_CODEC))
     #r.append("<form action='%s' enctype='multipart/form-data' method='POST' accept-charset='%s'>\n" % (THIS_SCRIPT,defaults.HTML_CODEC))
     background="""<p>
-Here you will enter the basic outline of your survey.
-</p>
-
-<p>
-Fill in the fields below
-(fields that are required are <span class='required'>in color</span>).
-When you are ready, hit the &quot;Ready&quot; button at the bottom
-of the page.
+These fields describe your survey.
+You must fill out the fields that are <span class='required'>in color</span>.
+(You will enter the survey questions on a later screen.)
 </p>
 """
     r.append(background)
@@ -162,26 +157,31 @@ paragraph between your title and your questions.</p></td>
     #days.append("</select>\n")
     #days_str="".join(days)
     #r.append(cgiUtils.section('Survey Dates and Mailings'))
+    r.append(cgiUtils.section('Second: how you will mail survey-takers'))
     dates_info="""
 <p>
-You will next enter the dates for your survey.
-You will also enter the email to be sent to each survey subject.
-<i>Note:</i>
-Your mail needs a place for the system to put the link that subjects will click on to take the survey -- indicate that place by writing &quot;%s&quot; (without the quotes) right in the body of the mail. 
+You will now enter the dates and emails to be sent to each survey subject.
+You will first select a date when the survey opens, and
+you will enter an email that is sent to
+all your subjects on that date (shortly after midnight). 
 </p>
 <p>
-You also have the chance to send up to two emails to subjects prompting them
-to respond.
-These are only sent to those subjects who have not yet responded.
-To send such a mail, click in a date and enter a message body
+<i>Important:</i> in that email you must 
+tell Theo where to put the link that the subject will click on to take the
+survey.
+To do that, write &quot;%s&quot; (without the quotes)
+right in the body of the mail.
+For instance, your email might say
+<code>Participate in the survey by clicking here: LINK HERE</code>.
+In the email sent to subjects that <code>LINK HERE</code> will of course
+be replaced by the right link.
+</p>
+<p>
+In addition to the initial email,
+you can also send emails prompting subjects who have not yet responded.
+To do that, click in a date and enter a message body
 (again, include a &quot;%s&quot;).
-To not send that mail, just leave the email area blank.
-</p>
-<p>
-Note that the dates refer to the midnight ending that day.
-For instance, if you select today's date then the earliest that
-your survey questions
-could be mailed out would be midnight tonight.
+To not send such a mail, just leave the email area blank.
 </p>
 """ % (defaults.LINK_STRING,defaults.LINK_STRING)
     r.append(dates_info)
@@ -446,7 +446,7 @@ def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
         dBres=dBUtils.getData(sql,dct=dct,dBcsr=dBcsr,selectOne=True,log=log,debug=debug,listtype='current value of id sequence')
         #dBcsr.execute(sql,dct)
         survey_id=dBres[0]
-    except psycopg.DatabaseError, err:
+    except  dBUtils.dBUtilsError, err:
         bail("Unable to get the survey id from the database",devel="Unable to get the survey id from the databse: %(err)s",log=log,debug=DEBUG,err=err)
     # make an id for each subject
     if not(no_subj_id_flag):
@@ -677,15 +677,15 @@ def accept_questions(fd,dBcnx,dBcsr,log=None,debug=False):
     try:
         dBUtils.putData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=debug)
         #dBcsr.execute(sql,dct)
-    except psycopg.DatabaseError, err:
-        bail("Unable to delete the information for questions from the database",devel="Unable to delete the information for questions for %(survey_id)s from the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
+    except dBUtils.dBUtilsError, err:
+        bail("Unable to delete the information for questions from the database (if the survey is in use, it can't be changed)",devel="Unable to delete the information for questions for %(survey_id)s from the database  (if the survey is in use, it can't be changed): %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
     # get the types of questions, with description and html
     sql="SELECT type,description,html FROM question_types"
     try:
         dBres=dBUtils.getData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=debug,listtype='list of question types')
         #dBcsr.execute(sql)
         qTypeList=dBres
-    except psycopg.DatabaseError, err:
+    except dBUtils.dBUtilsError, err:
         bail('Unable to get the list of question types, descriptions, and html from the database.',devel="Unable to get the list of question types from the database for %(survey_id)s: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
     qTypeHTMLDict={}  # maps question type to html
     qTypes=[]  # list of question types
@@ -718,7 +718,7 @@ def accept_questions(fd,dBcnx,dBcsr,log=None,debug=False):
         try:
             dBUtils.putData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=debug)
             #dBcsr.execute(sql,dct)
-        except psycopg.DatabaseError, err:
+        except  dBUtils.dBUtilsError, err:
             bail("Unable to put the question information into the database",devel="Unable to put the question information for survey %(survey_id)s into the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
         except Exception, err:
             bail("Unable to insert the question information into the database",devel="Unable to insert the question information for survey %(survey_id)s into the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
@@ -763,7 +763,7 @@ or visit the page %s at a later date.
     for q_no in range(1,s.getNumberQuestions()+1):
         dct=qData[q_no-1]
         if dct['preamble']:
-            survey.append("<p class='question_preamble'>Preamble: %s</p>\n" % (cgi.escape(dct['preamble']),))
+            survey.append("<p class='question_preamble'>%s</p>\n" % (cgi.escape(dct['preamble']),))
         #survey.append("<li /> <span class='question_body'>Question: %(body)s</span>\n" % dct)
         survey.append("<p class='question'><span class='question_number'>Question %s</span> <span class='question_body'>%s</span></p>\n" % (dct['number'],cgi.escape(dct['body']),))
         q_string=qTypeHTMLDict[dct['question_type']]
@@ -789,6 +789,9 @@ or visit the page %s at a later date.
     try:
         dBUtils.putData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='survey prefix and postfix information')
         #dBcsr.execute(sql,dct)
+    except dBUtils.dBUtilsError, err:
+        bail("Unable to put the survey prefix and postfix into the database",devel="Unable to put the survey prefix and postfix for survey %(survey_id)s into the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
+    try:
         dBcnx.commit()
     except psycopg.DatabaseError, err:
         bail("Unable to put the survey prefix and postfix into the database",devel="Unable to put the survey prefix and postfix for survey %(survey_id)s into the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)

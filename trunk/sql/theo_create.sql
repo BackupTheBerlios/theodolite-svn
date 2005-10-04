@@ -27,6 +27,7 @@ CREATE TABLE legal_answers (
 	a_id	SERIAL,	-- hack to allow order in which answers input to matter
 	q_type	TEXT,  -- question type
 	answer	TEXT,  -- answer that can be associated with q_type
+	analyzable	BOOLEAN,   -- should this count as part of mean, std dev?  or is it a nominal value, like "No opinion"?
 	UNIQUE(q_type,answer),
 	FOREIGN KEY(q_type) REFERENCES question_types(type)
 );

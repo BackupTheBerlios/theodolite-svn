@@ -48,7 +48,7 @@ class survey(object):
         for (type,description,multiple,quantitative,bar_chart,html) in dBres:
             qTypeDct[type]=(description,multiple,quantitative,bar_chart,html)
         # get the legal answers information
-        sql="SELECT q_type, answer FROM legal_answers ORDER BY a_id"  # "ORDER BY" makes the answers come out in the same order in which they went in; so are displayed in the results in a controllable order
+        sql="SELECT q_type, answer, analyzable FROM legal_answers ORDER BY a_id"  # "ORDER BY" makes the answers come out in the same order in which they went in; so are displayed in the results in a controllable order
         try:
             dBres=dBUtils.getData(sql,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='list of legal answers information')
         except dBUtils.dBUtilsError, err:
@@ -56,11 +56,11 @@ class survey(object):
         if dBres is None:
             noteException("Unable to find legal answers information in the database",devel="Unable to find legal answers information in the database for the survey %(survey_id)s: query results empty",log=log,exception=surveyError,debug=DEBUG,survey_id=survey_id)
         legalAnswersDct={}
-        for (q_type,answer) in dBres:
+        for (q_type,answer,analyzable) in dBres:
             if legalAnswersDct.has_key(q_type):
-                legalAnswersDct[q_type].append(answer)
+                legalAnswersDct[q_type].append((answer,analyzable))
             else:
-                legalAnswersDct[q_type]=[answer]
+                legalAnswersDct[q_type]=[(answer,analyzable)]
         # get the question information
         sql="SELECT number,preamble,q_type,body,comment FROM questions WHERE survey_id=%(survey_id)s"
         dct={'survey_id':survey_id}
@@ -268,7 +268,27 @@ class survey(object):
         """If it is None, then all answers are legal; otherwise a list"""
         d=self.getQuestion(q_no) # may raise surveyError
         if d.has_key('legal_answers'):
-            return d['legal_answers']
+            if d['legal_answers'] is None:
+                return None  # flag that any answer is legal
+            else:
+                lst=[]
+                for (answer,analyzable) in d['legal_answers']:
+                    lst.append(answer)
+                return lst
+        else:
+            raise surveyError, "getQuestionLegalAnswers: no legal answers for question %s" % (q_no,)
+    def getQuestionAnswersAnalyzable(self,q_no):
+        """Return a list of the analyzable legal answers (e.g., if a question
+        has rate 1-5 and "no opinion" coded as 1, 2, .. 5 and 0 then you don't
+        want the 0's counted as part of the std dev)"""
+        d=self.getQuestion(q_no) # may raise surveyError
+        lst=[]
+        if d.has_key('legal_answers'):
+            if d['legal_answers'] is None:
+                return None   # any answer is legal
+            for (answer,analyzable) in d['legal_answers']:
+                lst.append(answer)
+            return lst
         else:
             raise surveyError, "getQuestionLegalAnswers: no legal answers for question %s" % (q_no,)
     def questionsEntered(self):

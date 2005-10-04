@@ -8,7 +8,7 @@ import marshal, base64 # for encode and decode
 from types import *  # for showListItems
 
 import library
-from defaults import HTML_CODEC, HOME_URL, MAINTAINER, DEBUG
+from defaults import HTML_CODEC, HOME_URL, GRAPHIC_URL, MAINTAINER, DEBUG
 import util
 
 from htmllib import HTMLParser
@@ -87,8 +87,8 @@ def page_top(title,logoShown=True):
       title  The page title, at the start of the page body
       logoShown=True  Whether to show the logo graphic
     """
-    logo="""<div id='logo'><img src='theo.png' alt='Theodolite logo' /></div>
-"""
+    logo="""<div id='logo'><img src='%s/theo.png' alt='Theodolite logo' /></div>
+""" % (GRAPHIC_URL,)
     top="""
 <div id='top' />
 <h2>%s</h2>
