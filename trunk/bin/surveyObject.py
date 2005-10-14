@@ -299,6 +299,19 @@ class survey(object):
             except: # index exists?
                 return False
         return True
+    def getTextFileLineFormat(self):
+        """Build a format for python to do % substitution
+        """
+        r=["%(subject_id)s"]
+        for q_no in range(1,self.getNumberQuestions()+1):
+            # the 03d allows up to 999 questions
+            if self.getQuestionQuantitative(q_no):
+                r.append("%%(answer%03d)s" % (q_no,))
+            else:
+                r.append("%%(answer%03d)s" % (q_no,)) # quote strings
+            if self.getQuestionComment(q_no):
+                r.append("%%(comment%03d)s" % (q_no,))
+        return ", ".join(r)
 
                   
 #------------------------------------------------------------------

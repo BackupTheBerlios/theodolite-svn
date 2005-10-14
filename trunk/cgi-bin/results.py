@@ -498,6 +498,11 @@ class textFile(object):
 download for analysis by a real stats package.
 """
     def __init__(self,survey,dBcnx,dBcsr):
+        """
+          survey  A surveyObject instance
+          dBcnx  A database connection
+          dBcsr  A database cursor
+        """
         self.survey=survey
         self.survey_id=survey.getID()  # handy to have without calling all over
         self.dBcnx=dBcnx
@@ -527,12 +532,82 @@ empty string; else call handle_text
 """
         return f
     
+##     def make_file(self):
+##         """Make the file of the complete survey results.
+## Returns a pair (flag,string); if the flag is True then success was had and the
+## desired file is in string.  If the flag is false then the error message is in
+## the string.
+## """
+##         r=[]
+##         # these fields are available for answerFormat
+##         answer_dct={'title':self.handle_text_field(survey.getTitle()),  
+##                     'contact_name':self.handle_text_field(survey.getContactName()),
+##                     'no_qs':survey.getNumberQuestions(),
+##                     'anonymous':survey.getAnonymous(),
+##                     'date_open':survey.getDateOpen(),
+##                     'mail1':self.handle_text_field(survey.getMail1()),
+##                     'mail1sent':survey.getMail1Sent(),
+##                     'date_mail2':survey.getDateMail2(),
+##                     'mail2':self.handle_text_field(survey.getMail2()),
+##                     'mail2sent':survey.getMail2Sent(),
+##                     'date_mail3':survey.getDateMail3(),
+##                     'mail3':self.handle_text_field(survey.getMail3()),
+##                     'mail3sent':survey.getMail3Sent(),
+##                     'date_closed':survey.getDateClosed()}
+##         # Get the answer data
+##         if survey.getAnonymous():
+##             sql="SELECT dex,number,comment FROM answers_anon WHERE survey_id=%(survey_id)s"
+##         else:
+##             sql="SELECT subject_id,number,comment FROM answers WHERE survey_id=%(survey_id)s"
+##         dct={'survey_id':self.survey_id}
+##         try:
+##             dBres=getData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='answer data')
+##         except dBUtilsError, err:
+##             bail("Unable to get the answers for this survey by fetching from the database",devel="Unable to get the answers for survey %(survey_id)s by fetching from the database: %(err)s",log=log,debug=DEBUG,survey_id=self.survey_id,err=err)
+##         comments=[{}]   # list of dicts: subject_id -> comment (first dct is dummy)
+##         for q_no in range(1,survey.getNumberQuestions()+1):
+##             comments.append({})    
+##         for (x,number,comment) in dBres:
+##             if (log and DEBUG):
+##                 log.debug("subject_id is %s, number is %s, comment is %s, comments is %s" % (x,number,comment,repr(comments)))
+##             if comment is not None:
+##                 comments[number][x]=comment
+##         # get the (possibly multiple) answers for each question
+##         if survey.getAnonymous():
+##             sql="SELECT dex,subject_id,number,value FROM answers_values_anon WHERE survey_id=%(survey_id)s ORDER BY dex, number"
+##         else:
+##             sql="SELECT subject_id,subject_id,number,value FROM answers_values WHERE survey_id=%(survey_id)s ORDER BY subject_id, number"
+##         dct={'survey_id':self.survey_id}
+##         try:
+##             dBres=getData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='answers values information')
+##         except dBUtilsError, err:
+##             bail("Unable to get the answers values for this survey by fetching from the database",devel="Unable to get the answers values for survey %(survey_id)s by fetching from the database: %(err)s",log=log,debug=DEBUG)
+##         answerFormat=self.translate_answer_format(survey.getAnswerFormat())
+##         prior=(-1,-1)  # for listing comment once only (needs ORDER BY clause)
+##         for (x,subject_id,number,value) in dBres:
+##             answer_dct['subject_id']=subject_id
+##             answer_dct['number']=number
+##             if value is None:  # if respondent didn't submit at all
+##                 value=''
+##             if survey.getQuestionQuantitative(number):
+##                 answer_dct['value']=value
+##             else:
+##                 answer_dct['value']=self.handle_text_field(value)
+##             if (prior!=(x,number)  # list the comment only if not before
+##                 and comments[number].has_key(x)):
+##                 answer_dct['comment']=self.handle_text_field(comments[number][x])
+##             else:
+##                 answer_dct['comment']=''
+##             r.append((answerFormat+"\n") % answer_dct)
+##             prior=(x,number)
+##         return (True,"".join(r))
     def make_file(self):
         """Make the file of the complete survey results.
 Returns a pair (flag,string); if the flag is True then success was had and the
 desired file is in string.  If the flag is false then the error message is in
 the string.
 """
+        lineFormat=self.translate_answer_format(self.survey.getTextFileLineFormat()) 
         r=[]
         # these fields are available for answerFormat
         answer_dct={'title':self.handle_text_field(survey.getTitle()),  
@@ -550,7 +625,7 @@ the string.
                     'mail3sent':survey.getMail3Sent(),
                     'date_closed':survey.getDateClosed()}
         # Get the answer data
-        if survey.getAnonymous():
+        if self.survey.getAnonymous():
             sql="SELECT dex,number,comment FROM answers_anon WHERE survey_id=%(survey_id)s"
         else:
             sql="SELECT subject_id,number,comment FROM answers WHERE survey_id=%(survey_id)s"
@@ -559,16 +634,26 @@ the string.
             dBres=getData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='answer data')
         except dBUtilsError, err:
             bail("Unable to get the answers for this survey by fetching from the database",devel="Unable to get the answers for survey %(survey_id)s by fetching from the database: %(err)s",log=log,debug=DEBUG,survey_id=self.survey_id,err=err)
-        comments=[{}]   # list of dicts: subject_id -> comment (first dct is dummy)
-        for q_no in range(1,survey.getNumberQuestions()+1):
-            comments.append({})    
-        for (x,number,comment) in dBres:
+        dexes=[]  # list of all dex or subject_id's
+        # comments is a dct such that comments[dex][x] is the comment made by
+        # subject dex to question x
+        comments={}
+        priorDex=None
+        for (dex,number,comment) in dBres:
+            comments[dex]={}
+            if dex!=priorDex:
+                dexes.append(dex)
+                priorDex=dex
+        for (dex,number,comment) in dBres:
             if (log and DEBUG):
-                log.debug("subject_id is %s, number is %s, comment is %s, comments is %s" % (x,number,comment,repr(comments)))
+                log.debug("subject_id is %s, number is %s, comment is %s, comments is %s" % (dex,number,comment,repr(comments)))
             if comment is not None:
-                comments[number][x]=comment
-        # get the (possibly multiple) answers for each question
-        if survey.getAnonymous():
+                comments[dex][number]=comment
+        # Recall that some questions may get multiple answers ("check all that
+        # apply" with a HTML checkbox)
+        # Here is how we handle that.  The line gets repeated until all the
+        # multiple answers are exhausted, with blanks elsewhere.
+        if self.survey.getAnonymous():
             sql="SELECT dex,subject_id,number,value FROM answers_values_anon WHERE survey_id=%(survey_id)s ORDER BY dex, number"
         else:
             sql="SELECT subject_id,subject_id,number,value FROM answers_values WHERE survey_id=%(survey_id)s ORDER BY subject_id, number"
@@ -577,25 +662,49 @@ the string.
             dBres=getData(sql,dct=dct,dBcsr=dBcsr,log=log,debug=DEBUG,listtype='answers values information')
         except dBUtilsError, err:
             bail("Unable to get the answers values for this survey by fetching from the database",devel="Unable to get the answers values for survey %(survey_id)s by fetching from the database: %(err)s",log=log,debug=DEBUG)
-        answerFormat=self.translate_answer_format(survey.getAnswerFormat())
-        prior=(-1,-1)  # for listing comment once only (needs ORDER BY clause)
+        # define dct answers: maps dex --> answers given by that subject
+        answers={}
+        prior=None
         for (x,subject_id,number,value) in dBres:
-            answer_dct['subject_id']=subject_id
-            answer_dct['number']=number
-            if value is None:  # if respondent didn't submit at all
-                value=''
-            if survey.getQuestionQuantitative(number):
-                answer_dct['value']=value
-            else:
-                answer_dct['value']=self.handle_text_field(value)
-            if (prior!=(x,number)  # list the comment only if not before
-                and comments[number].has_key(x)):
-                answer_dct['comment']=self.handle_text_field(comments[number][x])
-            else:
-                answer_dct['comment']=''
-            r.append((answerFormat+"\n") % answer_dct)
-            prior=(x,number)
-        return (True,"".join(r))
+            if not(x==prior):
+                answers[x]={} # answers[s] dct will map q_no -> list of answers
+                for i in range(1,survey.getNumberQuestions()+1):
+                    answers[x][i]=[]  
+        for (x,subject_id,number,value) in dBres:
+            answers[x][number].append(value)
+        # have now stored all the answers in the data structure (and comments
+        # in a separate data structure).  Ready to substitute into the
+        # lineFormat
+        for dex in dexes:  # for each respondent
+            firstLine=True
+            doAnotherLine=False
+            while (firstLine
+                   or doAnotherLine):  # produce the lines for that respondent
+                doAnotherLine=False  
+                answer_dct={}
+                answer_dct['subject_id']=dex
+                for i in range(1,survey.getNumberQuestions()+1): # build the answer dictionary
+                    answerKey="answer%03d" % (i,)  # see surveyObject.getTextFileLineFormat
+                    commentKey="comment%03d" % (i,)
+                    try:
+                        value=answers[dex][i].pop()
+                    except IndexError:
+                        value=''
+                    doAnotherLine=(doAnotherLine or answers[dex][i]) # anything left on the list of answers?
+                    if value is None:  # if respondent didn't submit at all
+                        value=''
+                    if survey.getQuestionQuantitative(i):
+                        answer_dct[answerKey]=value
+                    else:
+                        answer_dct[answerKey]=self.handle_text_field(value)
+                    if (firstLine
+                        and comments[dex].has_key(i)):
+                        answer_dct[commentKey]=self.handle_text_field(comments[dex][i])
+                    else:
+                        answer_dct[commentKey]=''
+                firstLine=False
+                r.append(lineFormat % answer_dct)
+        return (True,"\n".join(r))
 
 
 class textFileSPSS(textFile):
@@ -606,7 +715,8 @@ class textFileSPSS(textFile):
 quotes and we replace tab with four spaces (and do tab-delimited).
   s  input string
 """
-        return s.replace("\t",'    ')  # no quotes; replace tab with spaces
+        s=s.replace("\t",'    ')  # replace tab with four spaces
+        return  "\"%s\"" % (s.replace('"',"''"))
 
     def translate_answer_format(self,f):
         """Change the listed answer format by replacing the commas with tabs

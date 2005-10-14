@@ -80,7 +80,7 @@ CREATE TABLE questions (
 	survey_id	TEXT,	-- id of the survey from which question comes
 	number	INTEGER,	--what question is this on the survey?
 	preamble	TEXT,	--text before the question?
-	q_type	TEXT,	-- yes or No, or what?
+	q_type	TEXT,	-- Yes-or-No, or what?
 	body	TEXT,	-- what to ask?
 	comment	BOOLEAN,	-- allow a comment after question?
 	FOREIGN KEY(q_type) REFERENCES question_types(type),
