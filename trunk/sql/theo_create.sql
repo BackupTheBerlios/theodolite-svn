@@ -9,7 +9,7 @@ CREATE TABLE admins (
 	email_name	TEXT, -- the "jhefferon" in jhefferon.smcvt.edu
 	email_domain	TEXT
 );
-GRANT select ON admins TO apache;
+GRANT select ON admins TO "www-data";
 
 -- types, like "Yes or no"
 CREATE TABLE question_types (
@@ -20,7 +20,7 @@ CREATE TABLE question_types (
 	bar_chart	BOOLEAN,	-- show results as bar chart, or list?
 	html	TEXT  -- what to put on page for responses
 );
-GRANT select ON question_types TO apache;
+GRANT select ON question_types TO "www-data";
 
 -- answers that are allowed, like "yes" or "no"
 CREATE TABLE legal_answers (
@@ -31,7 +31,7 @@ CREATE TABLE legal_answers (
 	UNIQUE(q_type,answer),
 	FOREIGN KEY(q_type) REFERENCES question_types(type)
 );
-GRANT select ON legal_answers TO apache;
+GRANT select ON legal_answers TO "www-data";
 
 -- Surveys that can be taken
 CREATE TABLE survey (
@@ -61,8 +61,8 @@ CREATE TABLE survey (
 	mail3sent	BOOLEAN,  -- sent it?
 	date_closed	TIMESTAMP	-- date past which no accept answers
 );
-GRANT select, insert, update ON survey_id_seq TO apache;
-GRANT select, insert, update ON survey TO apache;
+GRANT select, insert, update ON survey_id_seq TO "www-data";
+GRANT select, insert, update ON survey TO "www-data";
 
 -- People who will take the survey
 CREATE TABLE subjects (
@@ -73,7 +73,7 @@ CREATE TABLE subjects (
 	FOREIGN KEY(survey_id) REFERENCES survey(id),
 	PRIMARY KEY(survey_id,id)
 );
-GRANT select, insert ON subjects TO apache;
+GRANT select, insert ON subjects TO "www-data";
 
 -- Questions for a survey
 CREATE TABLE questions (
@@ -86,8 +86,7 @@ CREATE TABLE questions (
 	FOREIGN KEY(q_type) REFERENCES question_types(type),
 	PRIMARY KEY(survey_id,number)
 );
-GRANT select, insert, delete, update ON questions TO apache;
-
+GRANT select, insert, delete, update ON questions TO "www-data";
 
 -- Answers for a (non-anonymous) survey; value is not here as it is in 
 -- answers_values 
@@ -101,8 +100,7 @@ CREATE TABLE answers (
 	FOREIGN KEY(survey_id,number) REFERENCES questions(survey_id,number),
 	FOREIGN KEY(survey_id,subject_id) REFERENCES subjects(survey_id,id)
 );
-GRANT select, insert, delete, update ON answers TO apache;
-
+GRANT select, insert, delete, update ON answers TO "www-data";
 
 -- Multiple values are allowed for a single question, from a single subject.
 CREATE TABLE answers_values (
@@ -112,8 +110,7 @@ CREATE TABLE answers_values (
 	value	TEXT,
 	FOREIGN KEY(subject_id,number) REFERENCES answers(subject_id,number) 
 );
-GRANT select, insert, delete, update ON answers_values TO apache;
-
+GRANT select, insert, delete, update ON answers_values TO "www-data";
 
 -- Contains an entry for each person who has replied already.
 CREATE TABLE replied (
@@ -123,8 +120,7 @@ CREATE TABLE replied (
 	PRIMARY KEY(survey_id,subject_id),
 	FOREIGN KEY(survey_id,subject_id) REFERENCES subjects(survey_id,id)
 );
-GRANT select, insert, delete, update ON replied TO apache;
-
+GRANT select, insert, delete, update ON replied TO "www-data";
 -- Below here handles the case of surveys with anonymous_flag set 
 
 -- Answers for a survey; value is not here as it is in answers_values 
@@ -137,9 +133,8 @@ CREATE TABLE answers_anon (
 	comment	TEXT,
 	FOREIGN KEY(survey_id,number) REFERENCES questions(survey_id,number)
 );
-GRANT select, insert, delete, update ON answers_anon TO apache;
-GRANT select, insert, delete, update ON answers_anon_dex_seq TO apache;
-
+GRANT select, insert, delete, update ON answers_anon TO "www-data";
+GRANT select, insert, delete, update ON answers_anon_dex_seq TO "www-data";
 
 -- Multiple values are allowed for a single question, from a single subject.
 CREATE TABLE answers_values_anon (
@@ -150,6 +145,5 @@ CREATE TABLE answers_values_anon (
 	value	TEXT,
 	FOREIGN KEY(dex) REFERENCES answers_anon(dex) 
 );
-GRANT select, insert, delete, update ON answers_values_anon TO apache;
-
+GRANT select, insert, delete, update ON answers_values_anon TO "www-data";
 

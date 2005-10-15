@@ -6,6 +6,9 @@ permissions, and there needs to be a system user account on PostgreSQL for
 your web daemon (e.g., the "apache" that is granted permission in 
 the theo_create.sql file below).
 
+For software, I use psycopg to connect PostgreSQL and Python, so you need
+to have that installed.
+
 0) Create a database.  Include the user that you will run as (I use
   'ftpmaint' for this), and the user that your web daemon runs as (I
   use 'apache').
@@ -24,7 +27,7 @@ Then I make a soft link between the .py files under theo and the web server's
 cgi-bin directory.  
   EX: mkdir /var/www/cgi-bin/theo
       ln -s /var/theo/cgi-bin/*.py /var/www/cgi-bin/theo
-Correct the #! line in each executable file.  
+You may need to correct the #! line in each executable file.  
 
 Also, I make a soft link to the theo index page
   EX: mkdir /var/www/html/theo
@@ -38,13 +41,21 @@ to that index file.
 string called SEPARATOR by choosing your own wacky characters.  This makes 
 your subject ID's more secure. 
 
-4) Edit the .sql file to reflect the name of the accounts that you will
+4) Edit the .sql files to reflect the name of the accounts that you will
 use to access the database, and then run the .sql files.
   EX: cd theo/sql
       psql -a -f theo_create.sql theo
       psql -a -f theo_stock.sql theo
 (The "drop" file is for deleting old material and starting over, and the
 "debug" file is development.)  
+
+For this purpose you may find useful the script trunk/aux/setWebDemonName.py .
+The idea here is that you make a three line file in that directory named 
+webDemonName.cfg: the first line can be anyting, the second will be the name
+of the web demon, and the third will be the password by which the web demon
+accesses the dB.  Then each time you download from the svn tree you just run 
+this one script to change the web demon name.  (The .cfg file is not in the
+svn tree so it doesn't get overwritten.)
 
 
 

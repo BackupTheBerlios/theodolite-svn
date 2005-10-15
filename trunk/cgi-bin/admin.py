@@ -506,8 +506,8 @@ def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
     r=[cgiUtils.section('Your survey request has been received')]
     admins_toshow=[]
     for (name,email_name,email_domain) in dBres:
-        admins_toshow.append("%s (at) %s" % (email_name,email_domain))
-    firstTenEmails=['"'+em+'"' for em in firstTenEmails]
+        admins_toshow.append("<code>%s (at) %s</code> " % (cgi.escape(email_name),cgi.escape(email_domain)))
+    firstTenEmails=['&quot;'+cgi.escape(em)+'&quot;' for em in firstTenEmails]
     intro="""
 <p>
 Your request for the survey &quot;%s&quot; is in the database.
@@ -518,7 +518,7 @@ Just as a quick check: the first few emails that you uploaded are
 An email about your request will be sent for approval to <code>%s</code>.
 You should be contacted by email in a couple of days.
 </p>
-""" % (cgi.escape(title),cgi.escape(", ".join(firstTenEmails)),cgi.escape("</code>, <code>".join(admins_toshow)))
+""" % (cgi.escape(title),", ".join(firstTenEmails),"".join(admins_toshow))
     r.append(intro)
     r.append(cgiUtils.section('What you can do next'))
     next="""
@@ -813,9 +813,9 @@ r.append(cgiUtils.page_top('Set up your survey'))
 log=None
 if LOGGING:
     try:
-        log=openLog(LOGFILE_NAME)
+        log=openLog(LOGFILE_NAME,purpose=THIS_SCRIPT)
     except utilError, err:
-        bail("Sorry, the system is misconfigured.  Unable to open the log file.",devel="Unable to open the log file %(logfilename)s",debug=DEBUG,logfilename=LOGFILE_NAME)
+        bail("Sorry, the system is misconfigured.  Unable to open the log file.",devel="Unable to open the log file %(logfilename)s: %(err)s",debug=DEBUG,logfilename=LOGFILE_NAME,err=err)
 # connect to the database
 try:
     (dBcnx,dBcsr)=opendB()

@@ -4,7 +4,7 @@
 
 
 -- People responsible for administering Theo
-INSERT INTO admins (name,password,email_name,email_domain) VALUES ('ftpmaint','','ftpmaint','localhost');
+INSERT INTO admins (name,password,email_name,email_domain) VALUES ('jim','','jim','localhost');
 
 
 -- question types
