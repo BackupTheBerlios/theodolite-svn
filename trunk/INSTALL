@@ -16,46 +16,50 @@ to have that installed.
   Adjust the user names in the .sql files to reflect the names that you have
   chosen for these users.
 
-1) Put the theo files someplace.  You can put them below you web daemon's
+1) Put the theo files someplace.  You can put them below your web daemon's
 cgi-bin directory.  Personally, I prefer to put them somewhere else
-  EX: mkdir /var/theo
-      cd /var
-      unzip theo
-  It must be someplace that your web daemon can read.
-     sudo -u apache cat /var/theo/html/index.html
-Then I make a soft link between the .py files under theo and the web server's
-cgi-bin directory.  
+  mkdir /home/svn/theodolite/trunk
+  <put the files under there>
+It must be someplace that your web daemon can read.  Then I make a soft link 
+between the .py files under theo and the web server's cgi-bin directory.  
   EX: mkdir /var/www/cgi-bin/theo
-      ln -s /var/theo/cgi-bin/*.py /var/www/cgi-bin/theo
+      ln -s /home/svn/theoolite/trunk/cgi-bin/*.py /var/www/cgi-bin/theo
 You may need to correct the #! line in each executable file.  
 
 Also, I make a soft link to the theo index page
   EX: mkdir /var/www/html/theo
-      ln -s /var/theo/html/index.html /var/www/html/theo/index.html
+      ln -s /home/svn/theodolite/trunk/html/index.html /var/www/html/theo/index.html
 and adjust the link in cgi-bin/cgiUtils.py's page_footer() function linking
 to that index file. 
 
-2) Edit the theo/cgi-bin/library.py file to point to your theo/bin directory
+2) Make a cgi-bin/library.py file 
+  cd cgi-bin
+  cp library_model.py library.py
+  emacs library.py
+and change the contents to point to your theo/bin directory.
 
-3) Edit the defaults.py file to suit your situation.  In particular, change the
-string called SEPARATOR by choosing your own wacky characters.  This makes 
-your subject ID's more secure. 
+3) Make a bin/defaults.py file
+  cd bin
+  cp defaults_model.py defaults.py
+  emacs defaults.py
+In particular, change the string called SEPARATOR by choosing your own wacky 
+characters; this makes your subject ID's more secure. Also change the
+WEB_DEMON_NAME entry to match what you did in step (0).
 
-4) Edit the .sql files to reflect the name of the accounts that you will
-use to access the database, and then run the .sql files.
-  EX: cd theo/sql
+4) Run aux/postInstall.py to make the .sql files reflect the name of the 
+web demon that will access the database, and then run the .sql files.
+  cd aux
+  ./postInstall.py
+
+5) Run the sql files
+      cd ../sql
+      psql -a -f theo_drop.sql theo
       psql -a -f theo_create.sql theo
       psql -a -f theo_stock.sql theo
+
 (The "drop" file is for deleting old material and starting over, and the
 "debug" file is development.)  
 
-For this purpose you may find useful the script trunk/aux/setWebDemonName.py .
-The idea here is that you make a three line file in that directory named 
-webDemonName.cfg: the first line can be anyting, the second will be the name
-of the web demon, and the third will be the password by which the web demon
-accesses the dB.  Then each time you download from the svn tree you just run 
-this one script to change the web demon name.  (The .cfg file is not in the
-svn tree so it doesn't get overwritten.)
 
 
 
