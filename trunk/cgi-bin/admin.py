@@ -79,6 +79,7 @@ You must fill out the fields that are <span class='required'>in color</span>.
 </p>
 """
     r.append(background)
+    r.append("<p>TEST_DATA is %s</p>" % (defaults.TEST_DATA,))
 
     noqs=["<select name='numberqs'>\n"]
     for i in range(1,defaults.MAX_NUM_QUESTIONS+1):
@@ -762,6 +763,7 @@ or visit the page %s at a later date.
     #survey.append("<ol>\n")
     for q_no in range(1,s.getNumberQuestions()+1):
         dct=qData[q_no-1]
+        survey.append("<div class='question_with_preamble'>")
         if dct['preamble']:
             survey.append("<p class='question_preamble'>%s</p>\n" % (cgi.escape(dct['preamble']),))
         #survey.append("<li /> <span class='question_body'>Question: %(body)s</span>\n" % dct)
@@ -773,6 +775,7 @@ or visit the page %s at a later date.
         if ((dct['comment'])
             and not(dct['question_type']=='commentonly')):
             survey.append("<span class='question_comment'>Comment: <input name='comment%d' size='80' maxlength='160' /></span>\n" % (q_no,))
+        survey.append("</div>")  # close question_with_preamble
     survey.append(cgiUtils.section('When you are finished ..'))
     survey.append("<p>.. hit the button. <input type='submit' name='Done' value='Done' /></p>\n")
     survey.append("<p>Thank you!</p>\n")

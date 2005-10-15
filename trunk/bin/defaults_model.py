@@ -1,3 +1,11 @@
+# defaults.py
+
+# Default values for the Theo system
+#  When you install Theo, copy defaults_model.py to defaults.py and edit
+# the entries to suit.  Because defaults.py is not in the svn tree, it
+# will not be replaced when you update.
+import sys, os, os.path
+
 # Default values for the Theo system
 THIS_MACHINE='localhost'
 MAINTAINER="ftpmaint@%s" % (THIS_MACHINE,)
