@@ -79,7 +79,6 @@ You must fill out the fields that are <span class='required'>in color</span>.
 </p>
 """
     r.append(background)
-    r.append("<p>TEST_DATA is %s</p>" % (defaults.TEST_DATA,))
 
     noqs=["<select name='numberqs'>\n"]
     for i in range(1,defaults.MAX_NUM_QUESTIONS+1):
