@@ -21,6 +21,10 @@ BASE_HTML_URL="%s://%s/%s" % (SCHEME,THIS_MACHINE,HTML_PATH)
 GRAPHIC_URL='/'+HTML_PATH  # where the .png lives; set this in index.html also
 HOME_URL="%s/index.html" % (BASE_HTML_URL,)
 
+# web demon name and password
+WEB_DEMON_NAME='apache' # name used by the web demon to access the dB
+WEB_DEMON_PASSWORD=''  # password used to access the dB
+
 # used to generate unique ids from the survey id and the user's id 
 SEPARATOR='W2f)kkk78l'  # put in some random characters
 
@@ -55,7 +59,7 @@ user=os.getenv('USER')
 if user=='ftpmaint':  # your name when you are installing
     DBCONNECTION_STRING="user=ftpmaint dbname=theo password="
 else:  # e.g., running as the apache user
-    DBCONNECTION_STRING="user=apache dbname=theo password="
+    DBCONNECTION_STRING="user=%s dbname=theo password=" % (WEB_DEMON_NAME,)
 
 # Log lots of stuff; turn off for production use
 LOGGING=True
