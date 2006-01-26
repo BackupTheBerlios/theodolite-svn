@@ -806,7 +806,7 @@ r=[cgiUtils.xhtml_content_type()]
 r.append(cgiUtils.xhtml_head())
 r.append(cgiUtils.page_head('Set up a survey'))
 r.append(cgiUtils.page_start_body())
-r.append(cgiUtils.page_top('Set up your survey'))
+r.append(cgiUtils.page_top("Set up a survey"))
 
 # open the log file
 log=None

@@ -8,6 +8,8 @@ import cgi
 
 import dBUtils
 from util import *
+sys.path.append('/home/svn/theodolite/trunk/cgi-bin')
+import cgiUtils
 import defaults
 DEBUG=defaults.DEBUG
 
@@ -194,6 +196,7 @@ class survey(object):
         """ 
         r=[]
         if self.getPostfix():
+            r.append(cgiUtils.page_top(None))
             if self.getPrefix():
                 r.append(self.getPrefix())
             if not(action is None):

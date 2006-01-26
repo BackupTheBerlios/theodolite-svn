@@ -74,6 +74,7 @@ def page_head(title,meta=None):
   <link rel='stylesheet' type='text/css'
       href='/css/theo.css'
       title='Theodolite style' />
+      <meta http-equiv='Content-Type' contents='text/hmtl; charset=UTF-8' />
 </head>
 """ % (title.encode('latin-1'),) 
 
@@ -84,15 +85,19 @@ def page_start_body():
 
 def page_top(title,logoShown=True):
     """The headline of the page
-      title  The page title, at the start of the page body
+      title  The page title, at the start of the page body.  If None, no head
+         is given
       logoShown=True  Whether to show the logo graphic
     """
     logo="""<div id='logo'><img src='%s/theo.png' alt='Theodolite logo' /></div>
 """ % (GRAPHIC_URL,)
     top="""
 <div id='top' />
+"""
+    if not(title is None):
+        top+="""
 <h2>%s</h2>
-""" % (cgi.escape(title),)
+"""% (cgi.escape(title),)
     if logoShown:
         return logo+top
     else:

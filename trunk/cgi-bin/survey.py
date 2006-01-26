@@ -18,8 +18,8 @@ import defaults
 from dBUtils import *
 import surveyObject
 
-# DEBUG=defaults.DEBUG
-DEBUG=True
+DEBUG=defaults.DEBUG
+# DEBUG=True
 LOGGING=True # permission to write to the log file?
 LOGFILE_NAME='survey.log'
 MAX_NUM_QUESTIONS=50

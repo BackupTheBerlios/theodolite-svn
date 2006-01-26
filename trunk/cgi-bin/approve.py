@@ -143,6 +143,8 @@ def accept_approvals(fs,dBcnx,dBcsr,log=None):
             try:
                 message=StringIO.StringIO()
                 writer=MimeWriter.MimeWriter(message)
+                writer.addheader('from',defaults.MAINTAINER)
+                writer.addheader('to',s.getContactEmail())
                 writer.addheader('subject',"Your survey for Theodolite: %s" % (s.getTitle(),))
                 writer.addheader('MIME-Version','1.0')
                 writer.startmultipartbody('mixed')

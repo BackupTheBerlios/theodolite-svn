@@ -125,6 +125,8 @@ def send_mail(template,survey_id,dBcsr,log=None,debug=False):
             print "  About to send mail to %s" % (email,)
         message=StringIO.StringIO()
         writer=MimeWriter.MimeWriter(message)
+        writer.addheader('from',defaults.MAINTAINER) # ? contact_email?
+        writer.addheader('to',email)
         writer.addheader('subject',title)
         writer.addheader('MIME-Version','1.0')
         writer.startmultipartbody('mixed')
