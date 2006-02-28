@@ -15,8 +15,9 @@ import dBUtils
 from util import *
 import surveyObject
 
-DEBUG=defaults.DEBUG
-LOGGING=False # permission to write to the log file?
+# DEBUG=defaults.DEBUG
+DEBUG=True
+LOGGING=True # permission to write to the log file?
 LOGFILE_NAME='mails.log'
 
 
@@ -141,6 +142,8 @@ def send_mail(template,survey_id,dBcsr,log=None,debug=False):
         email.strip()
         try:
             smtp.sendmail(contact_email,email,message.getvalue())
+            if verbose:
+                print "  mail sent to ",email
         except Exception, err:
             print "Unable to send mail to %s: %s" % (email,err)
         smtp.quit()
@@ -192,10 +195,13 @@ if __name__=='__main__':
     if LOGGING:
         try:
             log=openLog(LOGFILE_NAME,announce=DEBUG)
+            import pwd
+            log.debug("Running as user %s" % (pwd.getpwuid(os.getuid())[0],))
+            print "Running as user %s" % (pwd.getpwuid(os.getuid())[0],)
         except utilError, err:
             fail("Unable to open log file %(logfilename)s: %(err)s",returnCode=3,log=None,debug=DEBUG,logfilename=LOGFILE_NAME,err=err)
     try:
-        (dBcnx,dBcsr)=dBUtils.opendB()
+        (dBcnx,dBcsr)=dBUtils.opendB(log=log,debug=DEBUG)
     except dBUtils.dBUtilsError, err:
         fail("Unable to open the database: %(err)s",returnCode=4,log=log,debug=DEBUG,err=err)
     # connections open, now start working

@@ -91,7 +91,7 @@ You must fill out the fields that are <span class='required'>in color</span>.
 <tr class='evenrow'><td class='info_description'><p><span class='required'>Your name</span></p></td>
   <td class='info'><input type='text' name='contact_name' value='' size='25' /></td></tr>
 
-<tr class='oddrow'><td class='info_description'><p><span class='required'>Your email address.</span> Give the while email, including the @ and the rest.</p></td>
+<tr class='oddrow'><td class='info_description'><p><span class='required'>Your email address.</span> Give the whole email, including the @ and the rest.</p></td>
   <td class='info'><input type='text' name='contact_email' value='' size='35' /></td></tr>
 
 <tr class='evenrow'><td class='info_description'><p>The password that you will use to administer your survey
@@ -484,6 +484,8 @@ def accept_survey(fs,dBcnx,dBcsr,log=None,debug=False):
     try:
         message=StringIO.StringIO()
         writer=MimeWriter.MimeWriter(message)
+        writer.addheader('to',defaults.MAINTAINER)
+        writer.addheader('from',defaults.MAINTAINER)
         writer.addheader('subject',"Theodolite -- new survey proposal: %s" % (title,))
         writer.addheader('MIME-Version','1.0')
         writer.startmultipartbody('mixed')
@@ -729,14 +731,23 @@ def accept_questions(fd,dBcnx,dBcsr,log=None,debug=False):
         bail("Unable to commit the question information to the database",devel="Unable to commit the question information for survey %(survey_id)s to the database: %(err)s",log=log,debug=DEBUG,survey_id=survey_id,err=err)
     # make up the page to return
     r.append(cgiUtils.section('Thank you'))
+    pageURL="%s?survey_id=%d" % (THIS_SCRIPT,survey_id)
     ifapproved="""
 <p>
 Your questions have been stored in the database.
 </p>
-"""
-    ifnotapproved="""
 <p>
-Your questions have been stored in the database.
+Look below
+to see if your survey reads as you want.
+It will appear to subjects
+as in the shaded area (but without the shade!).
+If you wish to do further editing, you can use your browser's BACK button,
+or visit the page %s at a later date.
+</p>
+"""  % ("<a href=%s>%s</a>" % (quoteattr(pageURL),cgi.escape(pageURL)))
+    ifnotapproved=ifapproved+"""
+
+<p>
 <i>Note:</i> your survey has not yet been approved by the administrator.
 Your survey can't go out -- questions or no -- until it is approved.
 </p>
@@ -745,15 +756,6 @@ Your survey can't go out -- questions or no -- until it is approved.
         r.append(ifapproved)
     else:
         r.append(ifnotapproved)
-    pageURL="%s?survey_id=%d" % (THIS_SCRIPT,survey_id)
-    conclusion="""
-<p>
-Your survey will appear as on the shaded area below (but without the shade!).
-If you wish to further edit it, you can use your browser's BACK button,
-or visit the page %s at a later date.
-</p>
-""" % ("\n<a href=%s>%s</a>\n" % (quoteattr(pageURL),cgi.escape(pageURL)),)
-    r.append(conclusion)
     survey_prefix=[]
     survey=["<h2>%s</h2>\n" % (cgi.escape(s.getTitle()),)]
     intro=s.getIntro()

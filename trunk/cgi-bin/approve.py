@@ -162,13 +162,16 @@ the questions (if you have not already done so) at
   %s
 .
 
+You want to save this email so that you have ready access to those
+URL's.
+
 Thank you,
 %s
 """ % (s.getContactName(),s.getTitle(),"%s?survey_id=%s" % (defaults.ADMIN_URL,s.getID()),"%s?id=%s" % (defaults.RESULTS_URL,s.getID()),defaults.MAINTAINER)
                 body.write(toUser)
                 writer.lastpart()
-                smtp=smtplib.SMTP('localhost')
-                smtp.sendmail(s.getContactEmail(),defaults.MAINTAINER,message.getvalue())
+                smtp=smtplib.SMTP(defaults.THIS_MACHINE)
+                smtp.sendmail(defaults.MAINTAINER,s.getContactEmail(),message.getvalue())
                 smtp.quit()
             except Exception, err:
                 bail("Error while notifying the survey user for survey %(id)s",devel="Unable to mail the survey user %(contact_email)s for unapproved survey %(id)s: %(err)s",log=log,debug=DEBUG,id=s.getID(),contact_email=s.getContactEmail(),err=err)
