@@ -35,7 +35,7 @@ class survey(object):
         #except psycopg.DatabaseError, err:
         except dBUtils.dBUtilsError, err:
             noteException("Unable to get survey object with id %(survey_id)s from the database",devel="Unable to get survey object with id %(survey_id)s from the database: %(err)s",log=log,exception=surveyError,debug=DEBUG,survey_id=survey_id,err=err)
-        if dBres is None:
+        if not(dBres):
             noteException("Unable to find a survey object with id %(survey_id)s from the database",devel="Unable to get survey object with id %(survey_id)s from the database: query results empty",log=log,exception=surveyError,debug=DEBUG,survey_id=survey_id)
         (self.title,self.contact_name,self.contact_email,self.password,self.intro,self.no_qs,self.email,self.anonymous,self.approved,self.answer_format,self.no_subj_id,self.prefix,self.postfix,self.date_open,self.mail1,self.mail1sent,self.date_mail2,self.mail2,self.mail2sent,self.date_mail3,self.mail3,self.mail3sent,self.date_closed)=dBres
         # get the question type information

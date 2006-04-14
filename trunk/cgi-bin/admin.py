@@ -37,16 +37,21 @@ if DEBUG:
 
     
 dateStringFormat='%b %d, %Y'   # like Sep 7, 2005
-def make_date_string():
+def make_date_string(offset=0):
     """Produce a string that will do for a <select> string.
-"""
+      s integer  preselect a date that is offset from today by this many days
+    """
     r=[]
     today=mx.DateTime.localtime()
     for i in range(0,45):
         newDay=today+mx.DateTime.RelativeDateTime(days=i)
         dateString=newDay.strftime(dateStringFormat)
         # dateString="%s %s, %s" % (month_names[newDay.month-1],newDay.day,newDay.year)
-        r.append("<option value=%s>%s</option>" % (quoteattr(dateString),cgi.escape(dateString)))
+        if i==offset:
+            selectedStr=" selected='selected'"
+        else:
+            selectedStr=""
+        r.append("<option value=%s%s>%s</option>" % (quoteattr(dateString),selectedStr,cgi.escape(dateString)))
     return "\n".join(r)
 
 
@@ -191,20 +196,20 @@ To not send such a mail, just leave the email area blank.
     r.append(dates_table_top)
     r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey should begin accepting input.</span></p></td>
   <td class='info'><select name=%s>\n%s</select></td></tr>
-""" % (quoteattr('date1'),dateString))
+""" % (quoteattr('date1'),make_date_string()))
     r.append("""<tr class='oddrow'><td class='info_description'><p><span class='required'>The mail that you would like to send.</span>  Remember to include a &quot;%s&quot;.</p></td>
-  <td class='info'><textarea name='body1' rows='%s' cols='%s'></textarea></td></tr>
+  <td class='info'><textarea name='body1' rows='%s' cols='%s'>Please participate in the survey by clicking on this link: LINK HERE</textarea></td></tr>
 """ % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the first prompting email.</p></td>
-  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date2'),dateString))
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date2'),make_date_string(offset=3)))
     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of the email -- remember the &quot;%s&quot;.</p></td>
   <td class='info'><textarea name='body2' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
     r.append("""<tr class='evenrow'><td class='info_description'><p>The date that you will send the second prompting email.</p></td>
-  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date3'),dateString))
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date3'),make_date_string(offset=7)))
     r.append("""<tr class='oddrow'><td class='info_description'><p>The body of your email -- remember a &quot;%s&quot;.</p></td>
   <td class='info'><textarea name='body3' rows='%s' cols='%s'></textarea></td></tr>""" % (defaults.LINK_STRING,defaults.EMAIL_ENTRY_ROWS,defaults.EMAIL_ENTRY_COLS))
     r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey will stop accepting responses (actually, the midnight starting this date).</span></p></td>
-  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date4'),dateString))
+  <td class='info'><select name=%s>\n%s</select></td></tr>""" % (quoteattr('date4'),make_date_string(offset=14)))
 
 
 ##     r.append("""<tr class='evenrow'><td class='info_description'><p><span class='required'>The date that your survey should begin accepting survey input.</span></p></td>
@@ -519,7 +524,7 @@ Just as a quick check: the first few emails that you uploaded are
 An email about your request will be sent for approval to <code>%s</code>.
 You should be contacted by email in a couple of days.
 </p>
-""" % (cgi.escape(title),", ".join(firstTenEmails),"".join(admins_toshow))
+""" % (cgi.escape(title),", ".join(firstTenEmails),", ".join(admins_toshow))
     r.append(intro)
     r.append(cgiUtils.section('What you can do next'))
     next="""

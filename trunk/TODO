@@ -1,6 +1,8 @@
 These need to be done:
 
-  * Check mails.py as a cron job
+  * Make a script for the admin that links id numbers and system id
+  (so the admin need not tell the surveyer the id numbers)
+  * for text comments, only report the number of non-blank responses 
 
 Longer term possibilities:
 
@@ -11,4 +13,5 @@ Longer term possibilities:
     subject id?
   * Generate graphics for results page
   * Make the survey id be a random string?
-
+  * Allow users to enter text of 1-5 type questions (might, for instance,
+    let it be used for voting)
