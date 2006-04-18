@@ -5,7 +5,7 @@
 
 -- People responsible for administering Theo
 INSERT INTO admins (name,password,email_name,email_domain) VALUES ('jim','','jim','localhost');
--- INSERT INTO admins (name,password,email_name,email_domain) VALUES ('johnk','','jkulhowvick','smcvt.edu');
+INSERT INTO admins (name,password,email_name,email_domain) VALUES ('johnk','','jkulhowvick','smcvt.edu');
 
 
 -- question types
@@ -242,16 +242,6 @@ INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('expectationsmet','
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('expectationsmet','0',FALSE);
 
 
--- excellent to poor
-INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('excellenttopoor','Rating',FALSE,TRUE,TRUE,'<table class="excellenttopoor">\n  <tr><td>Excellent</td> <td>Very Good</td> <td>Fair</td> <td>Poor</td> <td>Unsure/Don''t Know</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> <td><input type="radio" name="%s" value="4" /></td> <td><input type="radio" name="%s" value="0" checked="checked" /></td> </tr></table>');
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','1',TRUE);
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','2',TRUE);
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','3',TRUE);
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','4',TRUE);
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','0',FALSE);
-
-
-
 -- very poorly to very well
 INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('verypoorlytoverywell','Very Poorly to Very Well',FALSE,TRUE,TRUE,'<table class="verypoortoverywell">\n  <tr><td>Very Poorly</td> <td>Poorly</td> <td>Fair</td> <td>Well</td> <td>Very Well</td> <td>Not Applicable</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> <td><input type="radio" name="%s" value="4" /></td> <td><input type="radio" name="%s" value="5" /></td> <td><input type="radio" name="%s" value="0" checked="checked" /></td> </tr></table>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('verypoorlytoverywell','1',TRUE);
@@ -346,8 +336,20 @@ INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('veryimportanttonot
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('veryimportanttonotatallimportant','0',FALSE);
 
 
+
+
+-- excellent to poor
+INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('excellenttopoor','Rating',FALSE,TRUE,TRUE,'<table class="excellenttopoor">\n  <tr><td>Excellent</td> <td>Very Good</td> <td>Fair</td> <td>Poor</td> <td>Unsure/Don''t Know</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> <td><input type="radio" name="%s" value="4" /></td> <td><input type="radio" name="%s" value="0" checked="checked" /></td> </tr></table>');
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','1',TRUE);
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','2',TRUE);
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','3',TRUE);
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','4',TRUE);
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoor','0',FALSE);
+
+
+
 -- excellent to poor, including non-participation
-INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('excellenttopoorwithnonparticipation','Rating',FALSE,TRUE,TRUE,'<table class="excellenttopoorwithnonparticipation">\n  <tr><td>Excellent</td> <td>Very good</td> <td>Fair</td> <td>Poor</td> <td>I Did Not Use This Service</td> <td>No Response</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> <td><input type="radio" name="%s" value="4" /></td> <td><input type="radio" name="%s" value="5" /></td> <td><input type="radio" name="%s" value="0" checked="checked" /></td> </tr></table>');
+INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('excellenttopoorwithnonparticipation','Rating, including Non-Participation',FALSE,TRUE,TRUE,'<table class="excellenttopoorwithnonparticipation">\n  <tr><td>Excellent</td> <td>Very good</td> <td>Fair</td> <td>Poor</td> <td>I Did Not Use This Service</td> <td>No Response</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> <td><input type="radio" name="%s" value="4" /></td> <td><input type="radio" name="%s" value="5" /></td> <td><input type="radio" name="%s" value="0" checked="checked" /></td> </tr></table>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoorwithnonparticipation','1',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoorwithnonparticipation','2',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('excellenttopoorwithnonparticipation','3',TRUE);
