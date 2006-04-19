@@ -590,7 +590,7 @@ INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,htm
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('classnr (no seniors)','1',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('classnr (no seniors)','2',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('classnr (no seniors)','3',TRUE);
-INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('classnr (no seniors)','0',TRUE);
+INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('classnr (no seniors)','0',FALSE);
 
 INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('class (no seniors)','Class, no seniors, No Response prechecked',FALSE,TRUE,TRUE,'<table class="class">\n  <tr><td>First-year</td> <td>Sophmore</td> <td>Junior</td> </tr>\n  <tr><td><input type="radio" name="%s" value="1" /></td> <td><input type="radio" name="%s" value="2" /></td> <td><input type="radio" name="%s" value="3" /></td> </tr></table>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('class (no seniors)','1',TRUE);
@@ -599,7 +599,6 @@ INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('class (no seniors)
 
 
 -- gpa
-<<<<<<< .mine
 INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('gpanr','GPA, No Response prechecked',FALSE,FALSE,TRUE,'<table class="gpa"><tr><td>4.0-3.5</td> <td>3.4-3.0</td> <td>2.9-2.5</td> <td>less than 2.5</td> <td>No Response</td></tr>\n  <tr><td><input type="radio" name="%s" value="4.0-3.5" /></td> <td><input type="radio" name="%s" value="3.4-3.0" /></td> <td><input type="radio" name="%s" value="2.9-2.5" /></td> <td><input type="radio" name="%s" value="less than 2.5" /></td> <td><input type="radio" name="%s" value="no response" /></td></tr></table>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('gpanr','4.0-3.5',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('gpanr','3.4-3.0',TRUE);
@@ -668,7 +667,6 @@ INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('definitelyvertical
 
 
 -- major, select box
-<<<<<<< .mine
 INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('major','Major',FALSE,FALSE,TRUE,'<select name="%s" class="major">\n  <option value="click to choose one" disabled="disabled" selected="selected">Click to choose one</option>\n <option value="accounting">Accounting</option>\n <option value="american studies">American Studies</option>\n <option value="anthropology">Anthropology</option>\n  <option value="art">Art</option>\n <option value="biochemistry">Biochemistry</option>\n <option value="biology">Biology</option>\n <option value="business administration">Business Administration</option>\n <option value="chemistry">Chemistry</option>\n <option value="classics">Classics</option>\n <option value="computer science">Computer Science</option>\n <option value="economics">Economics</option>\n <option value="elementary education">Elementary Education</option>\n <option value="engineering">Engineering</option>\n <option value="english">English</option>\n <option value="environmental science">Environmental Science</option>\n <option value="french">French</option>\n <option value="history">History</option>\n <option value="information systems">Information Systems</option>\n <option value="journalism">Journalism</option>\n <option value="mathematics">Mathematics</option>\n <option value="music">Music</option>\n <option value="philosophy">Philosophy</option>\n <option value="physical science">Physical Science</option>\n <option value="physics">Physics</option>\n <option value="political science">Political Science</option>\n <option value="psycology">Psycology</option>\n <option value="religious studies">Religious Stdies</option>\n <option value="sociology">Sociology</option>\n <option value="spanish">Spanish</option>\n <option value="theater">Theater</option>\n </select>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('major','click to choose one',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('major','accounting',TRUE);
@@ -704,7 +702,6 @@ INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('major','theater',T
 
 
 -- minor, select box
-<<<<<<< .mine
 INSERT INTO question_types (type,description,multiple,quantitative,bar_chart,html) VALUES ('minor','Minor',FALSE,FALSE,TRUE,'<select name="%s" class="minor">\n  <option value="click to choose one" disabled="disabled" selected="selected">Click to choose one</option>\n <option value="accounting">Accounting</option>\n <option value="art">Art</option>\n <option value="biology">Biology</option>\n <option value="business administration">Business Administration</option>\n <option value="chemistry">Chemistry</option>\n <option value="classics">Classics</option>\n <option value="computer science">Computer Science</option>\n <option value="east asian studies">East Asian Studies</option>\n  <option value="economics">Economics</option>\n <option value="english">English</option>\n <option value="environmental studies">Environmental Studies</option>\n <option value="french">French</option>\n <option value="gender/womens studies">Gender/Women''s Studies</option>\n <option value="global studies">Global Studies</option>\n <option value="history">History</option>\n  <option value="human geography">Human Geography</option>\n <option value="international business">International Business</option>\n  <option value="italian">Italian</option>\n <option value="journalism">Journalism</option>\n <option value="mathematics">Mathematics</option>\n <option value="medieval studies">Medieval Studies</option>\n <option value="music">Music</option>\n <option value="philosophy">Philosophy</option>\n <option value="physics">Physics</option>\n <option value="political science">Political Science</option>\n <option value="religious studies">Religious Studies</option>\n <option value="sociology">Sociology</option>\n <option value="spanish">Spanish</option>\n <option value="theater">Theater</option>\n </select>');
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('minor','click to choose one',TRUE);
 INSERT INTO legal_answers (q_type,answer,analyzable) VALUES ('minor','accounting',TRUE);

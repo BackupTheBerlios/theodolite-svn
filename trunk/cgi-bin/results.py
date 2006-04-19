@@ -198,7 +198,7 @@ def show_results(fs,survey_id,survey,dBcnx,dBcsr):
             values[number].append(value)
         else: # shouldn't happen
             bail("A value for a question is there that is not a legal answer",devel="Found a value %(value)s for question %(number)s that is not a legal answer",log=log,debug=DEBUG,value=value,number=number)
-        if (analyzableAnswers .has_key(number)
+        if (analyzableAnswers.has_key(number)
             and analyzableValues.has_key(number)
             and ((analyzableAnswers[number] is None)
                  or (value in analyzableAnswers[number]))):
